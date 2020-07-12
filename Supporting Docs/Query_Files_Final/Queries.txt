@@ -1,0 +1,59 @@
+
+	
+Query – 1 – what are the top 10 highest selling albums?
+
+SELECT A.AlbumId, A.Title, AT.Name, SUM(IL.InvoiceLineId) AS CopiesSold
+FROM InvoiceLine IL
+JOIN Invoice I
+ON IL.InvoiceId = I.InvoiceId
+JOIN Track T
+ON T.TrackId = IL.TrackId
+JOIN Album A
+ON T.AlbumId = A.AlbumId
+JOIN Artist AT
+ON A.ArtistId = AT.ArtistId
+GROUP BY I.InvoiceId
+ORDER BY SUM(IL.InvoiceLineId) DESC
+LIMIT 10;
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Query – 2 – What are top 5 most popular Genre?
+
+SELECT DISTINCT G.Name, sum(DISTINCT IL.InvoiceLineId) CopiesSold
+FROM InvoiceLine IL
+JOIN Invoice I
+ON IL.InvoiceId = I.InvoiceId
+JOIN Track T
+ON T.TrackId = IL.TrackId
+JOIN Genre G
+ON T.GenreId = G.GenreId
+GROUP BY G.Name
+ORDER BY sum(DISTINCT IL.InvoiceLineId) DESC
+LIMIT 5;
+
+-----------------------------------------------------------------------------------------------------------------------------------------
+
+
+Query – 3 – which playlist has the most number of tracks?
+
+SELECT PL.PlaylistId, PL.Name, COUNT(PLT.TrackID) AS TotalTracks
+FROM Playlist PL
+JOIN PlaylistTrack PLT
+ON PLT.PlaylistId = PL.PlaylistId
+GROUP BY PL.Name
+ORDER BY COUNT(PLT.TrackID) DESC;
+
+------------------------------------------------------------------------------------------------------------------------------------------
+
+Query – 4 – Name the top 5 customers who spend the most on tracks
+
+SELECT I.InvoiceId, I.InvoiceDate AS FirstInvoiceDate, C.CustomerId, C.FirstName, C.LastName, SUM(IL.UnitPrice * IL.Quantity) TotalSpend
+FROM Invoice I
+JOIN Customer C
+ON I.CustomerId = C.CustomerId
+JOIN InvoiceLine IL
+ON IL.InvoiceId = I.InvoiceId
+GROUP BY C.CustomerId
+ORDER BY TotalSpend DESC
+LIMIT 5;
